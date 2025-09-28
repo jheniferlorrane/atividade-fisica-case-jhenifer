@@ -1,0 +1,35 @@
+services:
+  mysql:
+    image: mysql:8.0.35
+    container_name: mysql_atividade
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: atividade
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "0.0.0.0:3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  app:
+    image: openjdk:17-jdk-slim
+    container_name: atividade_app
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./back-end:/app
+    command: bash -c "./mvnw clean package -DskipTests && java -jar target/atividade-0.0.1-SNAPSHOT.jar"
+    ports:
+      - "0.0.0.0:8080:8080" # O "0.0.0.0" Aceita de qualquer IP
+    depends_on:
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/atividade
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=pass
+
+volumes:
+  mysql_data:

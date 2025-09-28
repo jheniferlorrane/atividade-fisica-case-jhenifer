@@ -1,0 +1,167 @@
+type: collection.insomnia.rest/5.0
+name: Atividade - Case - Jhenifer
+meta:
+  id: wrk_95dacee752884a02b814c9b867ac9f24
+  created: 1758997865217
+  modified: 1758997865217
+collection:
+  - name: Atividade
+    meta:
+      id: fld_1a8cd5e0994e4500942fdc2adaad584f
+      created: 1758998174544
+      modified: 1758998174544
+      sortKey: -1758998174544
+    children:
+      - url: http://localhost:8080/atividades
+        name: Postar atividade
+        meta:
+          id: req_01e7250bcb8f45038450f141ab650033
+          created: 1758998138455
+          modified: 1759027103690
+          isPrivate: false
+          sortKey: -1758998179697
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"funcional": "123458",
+            	"dataHora": "2025-09-24T07:30:00",
+            	"codigoAtividade": "Caminhada",
+            	"descricaoAtividade": "Caminhada de 5km"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+            id: pair_44a354bb1c7a479d953516746b948e0c
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/atividades
+        name: "Listar todas as atividades "
+        meta:
+          id: req_599be2e9b13c49f388e9097ea4cb0964
+          created: 1758998197993
+          modified: 1759027099159
+          isPrivate: false
+          sortKey: -1758998197993
+        method: GET
+        headers:
+          - id: pair_e14102e8f1c047f5af0c6ee91f0c305a
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/atividades?funcional=12345678
+        name: Listar atividades pela funcional
+        meta:
+          id: req_23651fd0ac6144ab8b3015a67dee017f
+          created: 1758998224761
+          modified: 1759026576574
+          isPrivate: false
+          sortKey: -1758998224761
+        method: GET
+        headers:
+          - id: pair_9d403f2912f34a39b0747577c68d4e64
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/atividades/1
+        name: Listar atividade por ID
+        meta:
+          id: req_912e001c91114e2b811500847c5dd45b
+          created: 1759027086131
+          modified: 1759027089049
+          isPrivate: false
+          sortKey: -1758998188845
+        method: GET
+        headers:
+          - id: pair_e14102e8f1c047f5af0c6ee91f0c305a
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/atividades/1
+        name: Atualizar atividade
+        meta:
+          id: req_987d299d4dc74e44bea07cd4a12be7e8
+          created: 1759027121714
+          modified: 1759027129027
+          isPrivate: false
+          sortKey: -1754225117398
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"funcional": "123458",
+            	"dataHora": "2025-09-24T07:30:00",
+            	"codigoAtividade": "Caminhada",
+            	"descricaoAtividade": "Caminhada de 5km"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+            id: pair_44a354bb1c7a479d953516746b948e0c
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:8080/atividades/1
+        name: Deletar atividade
+        meta:
+          id: req_b9bb4aff994c4ce28518b2b66a5afbad
+          created: 1759027160936
+          modified: 1759027163307
+          isPrivate: false
+          sortKey: -1758998184271
+        method: DELETE
+        headers:
+          - id: pair_e14102e8f1c047f5af0c6ee91f0c305a
+            disabled: false
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_ad86acd33235e5d19c6a9e3c88e40f7ac6660c9c
+    created: 1758997865223
+    modified: 1758997865223
+environments:
+  name: Base Environment
+  meta:
+    id: env_ad86acd33235e5d19c6a9e3c88e40f7ac6660c9c
+    created: 1758997865221
+    modified: 1758997865221
+    isPrivate: false

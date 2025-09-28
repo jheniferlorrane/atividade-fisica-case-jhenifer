@@ -1,0 +1,427 @@
+{
+	"log": {
+		"version": "1.2",
+		"creator": {
+			"name": "Insomnia REST Client",
+			"version": "insomnia.desktop.app:v11.1.0"
+		},
+		"entries": [
+			{
+				"startedDateTime": "2025-09-28T04:19:41.656Z",
+				"time": 17.264000000000003,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8080/atividades?funcional=12345678",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [],
+					"queryString": [],
+					"postData": {
+						"mimeType": "",
+						"text": ""
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Vary",
+							"value": "Origin"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"name": "Date",
+							"value": "Sun, 28 Sep 2025 02:29:36 GMT"
+						}
+					],
+					"content": {
+						"size": 281,
+						"mimeType": "application/json",
+						"text": "[{\"idAtividade\":1,\"funcional\":\"12345678\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"RUN\",\"descricaoAtividade\":\"Corrida de 5km\"},{\"idAtividade\":2,\"funcional\":\"12345678\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"Caminhada\",\"descricaoAtividade\":\"Caminhada de 5km\"}]"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 17.264000000000003,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Listar atividades pela funcional"
+			},
+			{
+				"startedDateTime": "2025-09-28T04:19:41.656Z",
+				"time": 35.856,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8080/atividades",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [],
+					"queryString": [],
+					"postData": {
+						"mimeType": "",
+						"text": ""
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Vary",
+							"value": "Origin"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"name": "Date",
+							"value": "Sun, 28 Sep 2025 02:29:06 GMT"
+						}
+					],
+					"content": {
+						"size": 565,
+						"mimeType": "application/json",
+						"text": "[{\"idAtividade\":1,\"funcional\":\"12345678\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"RUN\",\"descricaoAtividade\":\"Corrida de 5km\"},{\"idAtividade\":2,\"funcional\":\"12345678\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"Caminhada\",\"descricaoAtividade\":\"Caminhada de 5km\"},{\"idAtividade\":3,\"funcional\":\"123458\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"Caminhada\",\"descricaoAtividade\":\"Caminhada de 5km\"},{\"idAtividade\":4,\"funcional\":\"123458\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"Caminhada\",\"descricaoAtividade\":\"Caminhada de 5km\"}]"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 35.856,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Listar todas as atividades "
+			},
+			{
+				"startedDateTime": "2025-09-28T04:19:41.656Z",
+				"time": 18.557000000000002,
+				"request": {
+					"method": "GET",
+					"url": "http://localhost:8080/atividades/1",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [],
+					"queryString": [],
+					"postData": {
+						"mimeType": "",
+						"text": ""
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Vary",
+							"value": "Origin"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"name": "Date",
+							"value": "Sun, 28 Sep 2025 02:38:56 GMT"
+						}
+					],
+					"content": {
+						"size": 141,
+						"mimeType": "application/json",
+						"text": "{\"idAtividade\":1,\"funcional\":\"123458\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"Caminhada\",\"descricaoAtividade\":\"Caminhada de 5km\"}"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 18.557000000000002,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Listar atividade por ID"
+			},
+			{
+				"startedDateTime": "2025-09-28T04:19:41.656Z",
+				"time": 38.065000000000005,
+				"request": {
+					"method": "DELETE",
+					"url": "http://localhost:8080/atividades/1",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [],
+					"queryString": [],
+					"postData": {
+						"mimeType": "",
+						"text": ""
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 204,
+					"statusText": "",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Vary",
+							"value": "Origin"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"name": "Date",
+							"value": "Sun, 28 Sep 2025 02:39:24 GMT"
+						}
+					],
+					"content": {
+						"size": 0,
+						"mimeType": "",
+						"text": ""
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 38.065000000000005,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Deletar atividade"
+			},
+			{
+				"startedDateTime": "2025-09-28T04:19:41.656Z",
+				"time": 409.528,
+				"request": {
+					"method": "POST",
+					"url": "http://localhost:8080/atividades",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n\t\"funcional\": \"123458\",\n\t\"dataHora\": \"2025-09-24T07:30:00\",\n\t\"codigoAtividade\": \"Caminhada\",\n\t\"descricaoAtividade\": \"Caminhada de 5km\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 201,
+					"statusText": "",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Vary",
+							"value": "Origin"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"name": "Date",
+							"value": "Sun, 28 Sep 2025 03:06:22 GMT"
+						}
+					],
+					"content": {
+						"size": 141,
+						"mimeType": "application/json",
+						"text": "{\"idAtividade\":1,\"funcional\":\"123458\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"Caminhada\",\"descricaoAtividade\":\"Caminhada de 5km\"}"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 409.528,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Postar atividade"
+			},
+			{
+				"startedDateTime": "2025-09-28T04:19:41.656Z",
+				"time": 174.17499999999998,
+				"request": {
+					"method": "PUT",
+					"url": "http://localhost:8080/atividades/1",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"queryString": [],
+					"postData": {
+						"mimeType": "application/json",
+						"text": "{\n\t\"funcional\": \"123458\",\n\t\"dataHora\": \"2025-09-24T07:30:00\",\n\t\"codigoAtividade\": \"Caminhada\",\n\t\"descricaoAtividade\": \"Caminhada de 5km\"\n}"
+					},
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"response": {
+					"status": 200,
+					"statusText": "",
+					"httpVersion": "HTTP/1.1",
+					"cookies": [],
+					"headers": [
+						{
+							"name": "Vary",
+							"value": "Origin"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Method"
+						},
+						{
+							"name": "Vary",
+							"value": "Access-Control-Request-Headers"
+						},
+						{
+							"name": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"name": "Date",
+							"value": "Sun, 28 Sep 2025 02:38:53 GMT"
+						}
+					],
+					"content": {
+						"size": 141,
+						"mimeType": "application/json",
+						"text": "{\"idAtividade\":1,\"funcional\":\"123458\",\"dataHora\":\"2025-09-24T07:30:00\",\"codigoAtividade\":\"Caminhada\",\"descricaoAtividade\":\"Caminhada de 5km\"}"
+					},
+					"redirectURL": "",
+					"headersSize": -1,
+					"bodySize": -1
+				},
+				"cache": {},
+				"timings": {
+					"blocked": -1,
+					"dns": -1,
+					"connect": -1,
+					"send": 0,
+					"wait": 174.17499999999998,
+					"receive": 0,
+					"ssl": -1
+				},
+				"comment": "Atualizar atividade"
+			}
+		]
+	}
+}
