@@ -49,39 +49,474 @@
   - Codificação UTF-8
   - Motor de armazenamento InnoDB
 
+---
+
+## Estrutura de Pacotes do Backend
+
+### **Organização Hierárquica**
+
+```
+br.com.atividade/
+├── AtividadeApplication.java          # Classe principal Spring Boot
+├── config/                            # Configurações da aplicação
+│   └── CorsConfig.java               # Configuração CORS para frontend
+├── controller/                        # Camada de controle REST
+│   └── AtividadeController.java      # Endpoints REST da API
+├── sevice/                           # Camada de serviço (lógica de negócio)
+│   ├── AtividadeService.java         # Interface do serviço
+│   ├── impl/
+│   │   └── AtividadeServiceImpl.java # Implementação do serviço
+│   └── dto/                          # Data Transfer Objects
+│       ├── input/
+│       │   └── AtividadeInput.java   # DTO para entrada de dados
+│       └── output/
+│           └── AtividadeOutput.java  # DTO para saída de dados
+├── repository/                        # Camada de acesso a dados
+│   └── AtividadeRepository.java      # Interface JPA Repository
+├── model/                            # Entidades do domínio
+│   └── Atividade.java               # Entidade JPA mapeada para tabela
+└── mapper/                           # Conversores de objetos
+    └── AtividadeMapper.java         # MapStruct para conversões
+```
+
+### **Responsabilidades por Camada**
+
+#### **1. Controller (Camada de Apresentação)**
+
+```java
+@RestController
+@RequestMapping("/atividades")
+public class AtividadeController {
+    // Responsabilidades:
+    // ✅ Receber requisições HTTP
+    // ✅ Validar dados de entrada (@Valid)
+    // ✅ Chamar services apropriados
+    // ✅ Retornar responses padronizados
+    // ✅ Tratamento de exceções HTTP
+    // ✅ Logging de requisições
+}
+```
+
+#### **2. Service (Camada de Negócio)**
+
+```java
+@Service
+@Transactional
+public class AtividadeServiceImpl implements AtividadeService {
+    // Responsabilidades:
+    // ✅ Implementar regras de negócio
+    // ✅ Validações de domínio
+    // ✅ Coordenar operações entre repositories
+    // ✅ Gerenciar transações (@Transactional)
+    // ✅ Logging de operações
+    // ✅ Conversão entre DTOs e Entities
+}
+```
+
+#### **3. Repository (Camada de Dados)**
+
+```java
+@Repository
+public interface AtividadeRepository extends JpaRepository<Atividade, Long> {
+    // Responsabilidades:
+    // ✅ Operações CRUD básicas (JpaRepository)
+    // ✅ Queries customizadas (@Query)
+    // ✅ Filtros dinâmicos (JpaSpecificationExecutor)
+    // ✅ Validações de existência
+}
+```
+
+#### **4. Model/Entity (Camada de Domínio)**
+
+```java
+@Entity
+@Table(name = "atividade")
+public class Atividade {
+    // Responsabilidades:
+    // ✅ Representar entidade de negócio
+    // ✅ Mapeamento objeto-relacional (@Entity, @Column)
+    // ✅ Definir relacionamentos JPA
+    // ✅ Encapsular estado dos dados
+}
+```
+
+#### **5. DTO (Data Transfer Objects)**
+
+```java
+// AtividadeInput.java - Entrada de dados
+public class AtividadeInput {
+    // Responsabilidades:
+    // ✅ Validações de entrada (@NotBlank, @Size)
+    // ✅ Contratos de API bem definidos
+    // ✅ Isolamento entre camadas externas e domínio
+}
+
+// AtividadeOutput.java - Saída de dados
+public class AtividadeOutput {
+    // Responsabilidades:
+    // ✅ Formato de resposta padronizado
+    // ✅ Controle de dados expostos
+    // ✅ Serialização JSON limpa
+}
+```
+
+#### **6. Mapper (Camada de Conversão)**
+
+```java
+@Mapper(componentModel = "spring")
+public interface AtividadeMapper {
+    // Responsabilidades:
+    // ✅ Conversão Input → Entity
+    // ✅ Conversão Entity → Output
+    // ✅ Mapeamento automático com MapStruct
+    // ✅ Transformações de dados
+}
+```
+
+#### **7. Config (Camada de Configuração)**
+
+```java
+@Configuration
+public class CorsConfig {
+    // Responsabilidades:
+    // ✅ Configurações de segurança (CORS)
+    // ✅ Beans de configuração
+    // ✅ Profiles de ambiente
+}
+```
+
+---
+
+## Stack Tecnológica Detalhada
+
+### **Dependências Principais (pom.xml)**
+
+#### **Core Spring Boot**
+
+```xml
+<!-- Spring Boot 3.5.6 com Java 17 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <!-- Web MVC, Tomcat embarcado, JSON -->
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+    <!-- JPA, Hibernate, Spring Data -->
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+    <!-- Bean Validation (JSR-303) -->
+</dependency>
+```
+
+#### **Banco de Dados**
+
+```xml
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <!-- Driver MySQL 8.0+ -->
+</dependency>
+
+<dependency>
+    <groupId>org.hibernate.orm</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>6.6.29.Final</version>
+    <!-- ORM Hibernate -->
+</dependency>
+```
+
+#### **Utilitários de Desenvolvimento**
+
+```xml
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <!-- Reduz boilerplate code -->
+</dependency>
+
+<dependency>
+    <groupId>org.mapstruct</groupId>
+    <artifactId>mapstruct</artifactId>
+    <version>1.5.5.Final</version>
+    <!-- Mapeamento automático de objetos -->
+</dependency>
+```
+
+#### **Documentação**
+
+```xml
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.8.13</version>
+    <!-- Swagger/OpenAPI 3.0 -->
+</dependency>
+```
+
+#### **Testes**
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <!-- JUnit 5, Mockito, Spring Test -->
+</dependency>
+
+<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <!-- Banco em memória para testes -->
+</dependency>
+```
+
+---
+
+## Configurações de Ambiente
+
+### **application.properties**
+
+```properties
+# Configuração da aplicação
+spring.application.name=atividade
+
+# Banco de Dados com variáveis Docker
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/atividade}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME:user}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:pass}
+
+# JPA/Hibernate
+spring.jpa.hibernate.ddl-auto=update        # Criação automática de tabelas
+spring.jpa.show-sql=false                   # Logs SQL (desabilitado em prod)
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.open-in-view=false               # Performance otimizada
+
+# Servidor
+server.port=8080
+server.address=0.0.0.0                      # Bind para Docker
+```
+
+### **application-test.properties**
+
+```properties
+# Configuração específica para testes
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.jpa.hibernate.ddl-auto=create-drop    # Recria BD a cada teste
+spring.jpa.show-sql=true                     # Logs SQL em testes
+```
+
+---
+
+## Validações e Tratamento de Erros
+
+### **Bean Validation**
+
+```java
+@Data
+public class AtividadeInput {
+    @NotBlank(message = "Funcional não pode estar vazio")
+    @Size(max = 50, message = "Funcional não pode ter mais de 50 caracteres")
+    private String funcional;
+
+    @NotNull(message = "Data e hora da atividade não podem estar vazias")
+    private LocalDateTime dataHora;
+
+    @NotBlank(message = "Código da atividade não pode estar vazio")
+    @Size(max = 20, message = "Código da atividade não pode ter mais de 20 caracteres")
+    private String codigoAtividade;
+
+    @NotBlank(message = "Descrição da atividade não pode estar vazia")
+    @Size(max = 255, message = "Descrição da atividade não pode ter mais de 255 caracteres")
+    private String descricaoAtividade;
+}
+```
+
+### **Tratamento de Exceções no Controller**
+
+```java
+@PostMapping
+public ResponseEntity<AtividadeOutput> criarAtividade(@Valid @RequestBody AtividadeInput input) {
+    try {
+        AtividadeOutput atividade = atividadeService.criarAtividade(input);
+        return new ResponseEntity<>(atividade, HttpStatus.CREATED);
+    } catch (IllegalArgumentException e) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    } catch (Exception e) {
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno");
+    }
+}
+```
+
+---
+
+## Operações de Banco de Dados
+
+### **Repository Customizado**
+
+```java
+@Repository
+public interface AtividadeRepository extends JpaRepository<Atividade, Long>, JpaSpecificationExecutor<Atividade> {
+
+    // Query método por funcional
+    @Query("SELECT a FROM Atividade a WHERE a.funcional = :funcional")
+    List<Atividade> findByFuncional(@Param("funcional") String funcional);
+
+    // Query com múltiplos filtros
+    @Query("SELECT a FROM Atividade a WHERE " +
+           "(:funcional IS NULL OR a.funcional = :funcional) AND " +
+           "(:codigoAtividade IS NULL OR a.codigoAtividade = :codigoAtividade) AND " +
+           "(:descricaoAtividade IS NULL OR LOWER(a.descricaoAtividade) LIKE LOWER(CONCAT('%', :descricaoAtividade, '%')))")
+    List<Atividade> findWithFilters(@Param("funcional") String funcional,
+                                   @Param("codigoAtividade") String codigoAtividade,
+                                   @Param("descricaoAtividade") String descricaoAtividade);
+
+    // Validação de duplicatas
+    boolean existsByCodigoAtividadeAndFuncional(String codigoAtividade, String funcional);
+}
+```
+
+### **Specification Dinâmica para Filtros Avançados**
+
+```java
+// No Service - Filtros com data
+public List<AtividadeOutput> listarAtividadesComFiltros(String funcional, String codigoAtividade,
+                                                        String descricaoAtividade, LocalDate dataInicio, LocalDate dataFim) {
+    Specification<Atividade> spec = (root, query, criteriaBuilder) -> {
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (funcional != null && !funcional.trim().isEmpty()) {
+            predicates.add(criteriaBuilder.equal(root.get("funcional"), funcional.trim()));
+        }
+
+        if (codigoAtividade != null && !codigoAtividade.trim().isEmpty()) {
+            predicates.add(criteriaBuilder.equal(root.get("codigoAtividade"), codigoAtividade.trim()));
+        }
+
+        if (descricaoAtividade != null && !descricaoAtividade.trim().isEmpty()) {
+            predicates.add(criteriaBuilder.like(
+                criteriaBuilder.lower(root.get("descricaoAtividade")),
+                "%" + descricaoAtividade.toLowerCase() + "%"
+            ));
+        }
+
+        if (dataInicio != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(
+                root.get("dataHora"), dataInicio.atStartOfDay()
+            ));
+        }
+
+        if (dataFim != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(
+                root.get("dataHora"), dataFim.atTime(23, 59, 59)
+            ));
+        }
+
+        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+    };
+
+    List<Atividade> atividades = atividadeRepository.findAll(spec);
+    return atividadeMapper.toOutputList(atividades);
+}
+```
+
+### **Transações e Performance**
+
+```java
+@Service
+@Transactional                    // Transações por padrão
+public class AtividadeServiceImpl {
+
+    @Transactional(readOnly = true)  // Otimização para leitura
+    public List<AtividadeOutput> listarTodasAtividades() {
+        // Operação somente leitura
+    }
+
+    @Transactional(rollbackFor = Exception.class)  // Rollback explícito
+    public AtividadeOutput criarAtividade(AtividadeInput input) {
+        // Operação com possibilidade de rollback
+    }
+}
+```
+
+---
+
+## Mapeamento de Objetos
+
+### **MapStruct - Conversões Automáticas**
+
+```java
+@Mapper(componentModel = "spring")
+public interface AtividadeMapper {
+
+    // Input → Entity (ignorando ID)
+    @Mapping(target = "idAtividade", ignore = true)
+    Atividade toEntity(AtividadeInput input);
+
+    // Entity → Output (incluindo ID)
+    @Mapping(target = "idAtividade", source = "idAtividade")
+    AtividadeOutput toOutput(Atividade entity);
+
+    // Lista de conversões
+    List<AtividadeOutput> toOutputList(List<Atividade> entities);
+
+    // Atualização de entidade existente
+    @Mapping(target = "idAtividade", ignore = true)
+    void updateEntityFromInput(AtividadeInput input, @MappingTarget Atividade entity);
+}
+```
+
+### **Vantagens do MapStruct**
+
+- ✅ **Performance**: Geração de código em tempo de compilação
+- ✅ **Type Safety**: Verificação de tipos estaticamente
+- ✅ **Manutenção**: Reduz código boilerplate
+- ✅ **Debugging**: Código gerado é legível
+
+---
+
+## Configuração CORS
+
+### **CorsConfig para Frontend**
+
+```java
+@Configuration
+public class CorsConfig {
+
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*");        // Permitir qualquer origem
+        config.addAllowedHeader("*");               // Permitir qualquer header
+        config.addAllowedMethod("*");               // Permitir qualquer método HTTP
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return new CorsFilter(source);
+    }
+}
+```
+
+### **Configuração para Produção**
+
+```java
+// Em produção, seria mais restritivo:
+config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://app.empresa.com"));
+config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+```
+
 > **Sobre o Motor InnoDB**: É o "mecanismo interno" padrão do MySQL que gerencia como os dados são armazenados e recuperados. InnoDB oferece transações ACID, bloqueio por linha (permitindo múltiplos usuários simultâneos), chaves estrangeiras e recuperação automática de falhas. É o motor ideal para aplicações web modernas por sua confiabilidade e performance em operações CRUD frequentes.
 
 ---
 
-## Arquitetura Backend Detalhada
-
-### Estrutura de Pacotes
-
-```
-br.com.atividade/
-├── controller/          # Camada de apresentação REST
-│   └── AtividadeController.java
-├── service/            # Lógica de negócio
-│   ├── AtividadeService.java (interface)
-│   ├── impl/
-│   │   └── AtividadeServiceImpl.java
-│   └── dto/
-│       ├── input/
-│       │   └── AtividadeInput.java
-│       └── output/
-│           └── AtividadeOutput.java
-├── repository/         # Camada de acesso a dados
-│   └── AtividadeRepository.java
-├── model/             # Entidades JPA
-│   └── Atividade.java
-├── mapper/            # MapStruct mappers
-│   └── AtividadeMapper.java
-├── config/           # Configurações
-│   └── CorsConfig.java
-└── AtividadeApplication.java  # Classe principal
-```
-
-### Padrões Arquiteturais Implementados
+## Padrões Arquiteturais Implementados
 
 #### **O que são Design Patterns?**
 
