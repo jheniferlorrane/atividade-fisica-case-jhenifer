@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,13 +47,15 @@ public class AtividadeController {
     public ResponseEntity<List<AtividadeOutput>> listarAtividades(
             @RequestParam(required = false) String funcional,
             @RequestParam(required = false) String codigoAtividade,
-            @RequestParam(required = false) String descricaoAtividade) {
+            @RequestParam(required = false) String descricaoAtividade,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
         
-        log.info("[Controller] - Listando atividades. Filtros - Funcional: {}, CodigoAtividade: {}, DescricaoAtividade: {}", 
-                funcional, codigoAtividade, descricaoAtividade);
+        log.info("[Controller] - Listando atividades. Filtros - Funcional: {}, CodigoAtividade: {}, DescricaoAtividade: {}, DataInicio: {}, DataFim: {}", 
+                funcional, codigoAtividade, descricaoAtividade, dataInicio, dataFim);
         
         try {
-            List<AtividadeOutput> atividades = atividadeService.listarAtividadesComFiltros(funcional, codigoAtividade, descricaoAtividade);
+            List<AtividadeOutput> atividades = atividadeService.listarAtividadesComFiltros(funcional, codigoAtividade, descricaoAtividade, dataInicio, dataFim);
             log.info("[Controller] - Total de atividades encontradas: {}", atividades.size());
             return ResponseEntity.ok(atividades);
         } catch (IllegalArgumentException e) {

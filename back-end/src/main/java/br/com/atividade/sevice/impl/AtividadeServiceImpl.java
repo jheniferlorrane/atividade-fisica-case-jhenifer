@@ -11,8 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import jakarta.persistence.criteria.Predicate;
 
 @Slf4j
 @Service
@@ -69,8 +73,7 @@ public class AtividadeServiceImpl implements AtividadeService {
         log.info("[DB] - Consulta por funcional executada - {} registros encontrados", atividades.size());
         log.info("[ServiceImpl] - Encontradas {} atividades para funcional: '{}'", atividades.size(), funcionalTrimmed);
         
-        // Log detalhado das atividades encontradas para debug
-        atividades.forEach(atividade -> 
+        atividades.forEach(atividade ->
             log.debug("[ServiceImpl] - Atividade encontrada: ID={}, Funcional='{}', Codigo='{}'", 
                 atividade.getIdAtividade(), atividade.getFuncional(), atividade.getCodigoAtividade()));
         
@@ -79,40 +82,35 @@ public class AtividadeServiceImpl implements AtividadeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AtividadeOutput> listarAtividadesComFiltros(String funcional, String codigoAtividade, String descricaoAtividade) {
-        log.info("[ServiceImpl] - Listando atividades com filtros - Funcional: {}, CodigoAtividade: {}, DescricaoAtividade: {}", 
-                funcional, codigoAtividade, descricaoAtividade);
-        
-        // Se nenhum filtro foi informado, retorna todas as atividades
-        if ((funcional == null || funcional.trim().isEmpty()) && 
-            (codigoAtividade == null || codigoAtividade.trim().isEmpty()) && 
-            (descricaoAtividade == null || descricaoAtividade.trim().isEmpty())) {
-            
-            log.info("[ServiceImpl] - Nenhum filtro informado, retornando todas as atividades");
-            return listarTodasAtividades();
-        }
-        
-        log.debug("[DB] - Executando consulta com filtros customizados");
-        List<Atividade> atividades = atividadeRepository.findWithFilters(
-            funcional != null ? funcional.trim() : null,
-            codigoAtividade != null ? codigoAtividade.trim() : null,
-            descricaoAtividade != null ? descricaoAtividade.trim() : null
-        );
-        
-        log.info("[DB] - Consulta com filtros executada - {} registros encontrados", atividades.size());
-        
-        // Log detalhado dos filtros aplicados
-        if (funcional != null && !funcional.trim().isEmpty()) {
-            log.debug("[ServiceImpl] - Filtro aplicado: Funcional = '{}'", funcional.trim());
-        }
-        if (codigoAtividade != null && !codigoAtividade.trim().isEmpty()) {
-            log.debug("[ServiceImpl] - Filtro aplicado: CodigoAtividade = '{}'", codigoAtividade.trim());
-        }
-        if (descricaoAtividade != null && !descricaoAtividade.trim().isEmpty()) {
-            log.debug("[ServiceImpl] - Filtro aplicado: DescricaoAtividade contém '{}'", descricaoAtividade.trim());
-        }
-        
-        return atividadeMapper.toOutputList(atividades);
+    public List<AtividadeOutput> listarAtividadesComFiltros(String funcional, String codigoAtividade, String descricaoAtividade, LocalDate dataInicio, LocalDate dataFim) {
+        log.info("[ServiceImpl] - Listando atividades com filtros - Funcional: {}, CodigoAtividade: {}, DescricaoAtividade: {}, DataInicio: {}, DataFim: {}",
+                funcional, codigoAtividade, descricaoAtividade, dataInicio, dataFim);
+
+        return atividadeRepository.findAll((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (funcional != null && !funcional.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("funcional"), funcional));
+            }
+
+            if (codigoAtividade != null && !codigoAtividade.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("codigoAtividade"), codigoAtividade));
+            }
+
+            if (descricaoAtividade != null && !descricaoAtividade.isEmpty()) {
+                predicates.add(criteriaBuilder.like(root.get("descricaoAtividade"), "%" + descricaoAtividade + "%"));
+            }
+
+            if (dataInicio != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dataHora"), dataInicio.atStartOfDay()));
+            }
+
+            if (dataFim != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dataHora"), dataFim.atTime(23, 59, 59)));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        }).stream().map(atividadeMapper::toOutput).collect(Collectors.toList());
     }
 
     @Override

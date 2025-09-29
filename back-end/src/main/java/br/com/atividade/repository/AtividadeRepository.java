@@ -2,6 +2,7 @@ package br.com.atividade.repository;
 
 import br.com.atividade.model.Atividade;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AtividadeRepository extends JpaRepository<Atividade, Long> {
+public interface AtividadeRepository extends JpaRepository<Atividade, Long>, JpaSpecificationExecutor<Atividade> {
     
     @Query("SELECT a FROM Atividade a WHERE a.funcional = :funcional")
     List<Atividade> findByFuncional(@Param("funcional") String funcional);
