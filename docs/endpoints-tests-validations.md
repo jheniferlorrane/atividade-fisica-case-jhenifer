@@ -48,6 +48,8 @@ Content-Type: application/json
 }
 ```
 
+> **Para Iniciantes - HTTP/1.1**: É a "versão da linguagem" que o navegador e servidor usam para conversar. HTTP/1.1 (lançado em 1997) ainda é muito usado porque é universal, simples e compatível com todas as ferramentas. É como usar português clássico - todo mundo entende!
+
 **Response (201 Created):**
 
 ```json
@@ -378,8 +380,6 @@ O backend utiliza **Bean Validation** (JSR 380) para validar dados de entrada:
 
 > **Para Iniciantes**: "Bean Validation" é como ter um inspetor que verifica se os dados que chegam estão corretos antes de salvar no banco. Se você esquecer de preencher um campo obrigatório, ele vai avisar o erro.
 
-> **Para Iniciantes**: "Bean Validation" é como ter um inspetor que verifica se os dados que chegam estão corretos antes de salvar no banco. Se você esquecer de preencher um campo obrigatório, ele vai avisar o erro.
-
 ```java
 public class AtividadeInput {
 
@@ -444,7 +444,7 @@ public class AtividadeInput {
 
 ## 📱 Códigos de Status HTTP
 
-> **Para Iniciantes**: Códigos de status HTTP são como "emoticons" que o servidor usa para dizer se deu certo ou errado. 200 = "tudo certo 😄", 404 = "não achei 😕", 500 = "algo deu errado aqui 😱".
+> **Para Iniciantes**: Códigos de status HTTP são como "emoji" que o servidor usa para dizer se deu certo ou errado. 200 = "tudo certo 😄", 404 = "não achei 😕", 500 = "algo deu errado aqui 😱".
 
 ### **Códigos de Sucesso**
 
@@ -471,161 +471,304 @@ public class AtividadeInput {
 ### 🔬 **Estrutura de Testes**
 
 ```
-src/test/java/
+src/test/java/br/com/atividade/
+├── AtividadeApplicationTests.java           # Testes de integração da aplicação
+├── config/
+│   └── CorsConfigTest.java                  # Testes de configuração CORS
 ├── controller/
-│   └── AtividadeControllerTest.java     # Testes de endpoints
-├── service/
-│   └── AtividadeServiceTest.java        # Testes de lógica de negócio
+│   └── AtividadeControllerTest.java         # Testes de endpoints REST
+├── mapper/
+│   └── AtividadeMapperImplTest.java         # Testes do mapper (MapStruct)
 ├── model/
-│   └── AtividadeTest.java               # Testes de entidade
-└── config/
-    └── CorsConfigTest.java              # Testes de configuração
+│   └── AtividadeTest.java                   # Testes da entidade JPA
+├── service/
+│   ├── AtividadeServiceTest.java            # Interface de testes do service
+│   ├── dto/
+│   │   ├── input/
+│   │   │   └── AtividadeInputTest.java      # Testes de validação do DTO de entrada
+│   │   └── output/
+│   │       └── AtividadeOutputTest.java     # Testes do DTO de saída
+│   └── impl/
+│       └── AtividadeServiceImplTest.java    # Testes da implementação do service
+└── resources/
+    └── application-test.properties          # Configurações para ambiente de teste
 ```
 
-### **Testes de Controller (Integration Tests)**
+> **Para Iniciantes**: Esta estrutura espelha a organização do código principal, garantindo que cada camada da aplicação tenha seus testes específicos - desde a entrada (controllers) até a saída (DTOs), passando por regras de negócio (services) e persistência (entities).
 
-> **Para Iniciantes**: "Integration Tests" testam se todas as peças funcionam bem juntas, como testar se o carro inteiro anda bem (não só o motor).
+### 📋 **Tipos de Testes Implementados**
 
-```java
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@Transactional
-class AtividadeControllerTest {
+#### **🚪 Testes de Entrada (AtividadeApplicationTests.java)**
 
-    @Autowired
-    private MockMvc mockMvc;
+- **Finalidade**: Testa se a aplicação Spring Boot inicializa corretamente
+- **Cobertura**: Context loading, configurações, método main
+- **Tipo**: Integration Test (testa o sistema como um todo)
 
-    @Test
-    @DisplayName("Deve criar atividade com dados válidos")
-    void deveCriarAtividadeComDadosValidos() throws Exception {
-        String atividadeJson = """
-            {
-                "funcional": "EMP001",
-                "dataHora": "2025-12-25T10:30:00",
-                "codigoAtividade": "RUN",
-                "descricaoAtividade": "Corrida teste"
-            }
-            """;
+#### **🌐 Testes de Controller (AtividadeControllerTest.java)**
 
-        mockMvc.perform(post("/atividades")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(atividadeJson))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.funcional").value("EMP001"))
-                .andExpect(jsonPath("$.codigoAtividade").value("RUN"));
-    }
+- **Finalidade**: Testa endpoints REST (HTTP requests/responses)
+- **Cobertura**: CRUD completo, validações, filtros, códigos de status
+- **Tipo**: Integration Test com MockMvc
+- **Tecnologias**: @SpringBootTest, MockMvc, JSONPath
 
-    @Test
-    @DisplayName("Deve retornar 400 para dados inválidos")
-    void deveRetornar400ParaDadosInvalidos() throws Exception {
-        String atividadeInvalidaJson = """
-            {
-                "funcional": "",
-                "dataHora": null,
-                "codigoAtividade": "",
-                "descricaoAtividade": ""
-            }
-            """;
+> **Para Iniciantes - MockMvc**: É um "simulador de navegador" que testa sua API REST sem iniciar um servidor web real. MockMvc "finge" fazer requisições HTTP, permitindo testar controllers de forma rápida e isolada - como um teatro onde os atores (controllers) encenam, mas o cenário (servidor) é simulado.
 
-        mockMvc.perform(post("/atividades")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(atividadeInvalidaJson))
-                .andExpect(status().isBadRequest());
-    }
+#### **🔄 Testes de Service (AtividadeServiceImplTest.java)**
 
-    @Test
-    @DisplayName("Deve listar atividades com filtros")
-    void deveListarAtividadesComFiltros() throws Exception {
-        mockMvc.perform(get("/atividades")
-                .param("funcional", "EMP001")
-                .param("codigoAtividade", "RUN"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
+- **Finalidade**: Testa lógica de negócio isoladamente
+- **Cobertura**: Operações CRUD, regras de validação, tratamento de exceções
+- **Tipo**: Unit Test com mocks
+- **Tecnologias**: @ExtendWith(MockitoExtension.class), @Mock, @InjectMocks
 
-    @Test
-    @DisplayName("Deve retornar 404 para ID inexistente")
-    void deveRetornar404ParaIdInexistente() throws Exception {
-        mockMvc.perform(get("/atividades/999"))
-                .andExpect(status().isNotFound());
-    }
-}
-```
+#### **🗺️ Testes de Mapper (AtividadeMapperImplTest.java)**
 
-### ⚙️ **Testes de Service (Unit Tests)**
+- **Finalidade**: Testa conversões entre DTOs e entidades
+- **Cobertura**: Mapeamento bidirecional, listas, valores nulos, campos parciais
+- **Tipo**: Unit Test puro (sem Spring Context)
+- **Tecnologias**: MapStruct, JUnit 5, AssertJ
 
-```java
-@ExtendWith(MockitoExtension.class)
-class AtividadeServiceTest {
+#### **💾 Testes de Model/Entity (AtividadeTest.java)**
 
-    @Mock
-    private AtividadeRepository repository;
+- **Finalidade**: Testa entidade JPA e suas validações
+- **Cobertura**: Constraints, relacionamentos, equals/hashCode
+- **Tipo**: Unit Test com validação Bean
+- **Tecnologias**: JPA, Bean Validation
 
-    @Mock
-    private AtividadeMapper mapper;
+#### **📥 Testes de Input DTO (AtividadeInputTest.java)**
 
-    @InjectMocks
-    private AtividadeServiceImpl service;
+- **Finalidade**: Testa validações de entrada de dados
+- **Cobertura**: @NotBlank, @Size, @Pattern, @Future, cenários edge
+- **Tipo**: Unit Test de validação
+- **Tecnologias**: Jakarta Bean Validation, Hibernate Validator
 
-    @Test
-    @DisplayName("Deve criar atividade com sucesso")
-    void deveCriarAtividadeComSucesso() {
-        // Given
-        AtividadeInput input = new AtividadeInput("EMP001",
-            LocalDateTime.of(2025, 12, 25, 10, 30),
-            "RUN", "Teste");
-        Atividade entity = new Atividade();
-        AtividadeOutput expectedOutput = new AtividadeOutput();
+#### **📤 Testes de Output DTO (AtividadeOutputTest.java)**
 
-        when(mapper.toEntity(input)).thenReturn(entity);
-        when(repository.save(entity)).thenReturn(entity);
-        when(mapper.toOutput(entity)).thenReturn(expectedOutput);
+- **Finalidade**: Testa estrutura de dados de resposta
+- **Cobertura**: Serialização JSON, getters/setters, construtores
+- **Tipo**: Unit Test de estrutura
 
-        // When
-        AtividadeOutput result = service.criarAtividade(input);
+#### **⚙️ Testes de Configuração (CorsConfigTest.java)**
 
-        // Then
-        assertThat(result).isEqualTo(expectedOutput);
-        verify(repository).save(entity);
-    }
+- **Finalidade**: Testa configurações CORS da aplicação
+- **Cobertura**: Headers permitidos, métodos HTTP, origens
+- **Tipo**: Integration Test de configuração
 
-    @Test
-    @DisplayName("Deve buscar atividades por funcional")
-    void deveBuscarAtividadesPorFuncional() {
-        // Given
-        String funcional = "EMP001";
-        List<Atividade> entities = Arrays.asList(new Atividade());
-        List<AtividadeOutput> expectedOutputs = Arrays.asList(new AtividadeOutput());
+### 📊 **Resumo da Cobertura de Testes**
 
-        when(repository.findByFuncional(funcional)).thenReturn(entities);
-        when(mapper.toOutputList(entities)).thenReturn(expectedOutputs);
+**🎯 Total: 8 classes de teste + 90+ cenários de teste**
 
-        // When
-        List<AtividadeOutput> result = service.listarPorFuncional(funcional);
+| Camada                | Arquivo de Teste                 | Cenários | Foco Principal                  |
+| --------------------- | -------------------------------- | -------- | ------------------------------- |
+| **Application**       | `AtividadeApplicationTests.java` | 2        | Context loading, método main    |
+| **Controller**        | `AtividadeControllerTest.java`   | 25+      | Endpoints REST, validações HTTP |
+| **Service Impl**      | `AtividadeServiceImplTest.java`  | 25+      | Lógica de negócio, exceções     |
+| **Service Interface** | `AtividadeServiceTest.java`      | 10+      | Contratos de interface          |
+| **Mapper**            | `AtividadeMapperImplTest.java`   | 20+      | Conversões DTO ↔ Entity         |
+| **Model**             | `AtividadeTest.java`             | 10+      | Entidade JPA, validações        |
+| **Input DTO**         | `AtividadeInputTest.java`        | 13+      | Bean Validation, entrada        |
+| **Output DTO**        | `AtividadeOutputTest.java`       | 8+       | Estrutura de saída              |
+| **Config**            | `CorsConfigTest.java`            | 5+       | Configurações CORS              |
 
-        // Then
-        assertThat(result).hasSize(1);
-        assertThat(result).isEqualTo(expectedOutputs);
-    }
-}
-```
+**✨ Principais Benefícios da Estrutura:**
+
+- 🔍 **Isolamento**: Cada camada testada independentemente
+- 🚀 **Velocidade**: Testes unitários executam rapidamente
+- 🎯 **Precisão**: Falhas apontam exatamente onde está o problema
+- 📈 **Cobertura**: 87% de cobertura geral (excelente!)
+- 🔒 **Confiabilidade**: Detecta regressões automaticamente
 
 ### **Cobertura de Testes (JaCoCo)**
 
+O projeto utiliza **JaCoCo (Java Code Coverage)** para medir a cobertura de testes e garantir qualidade do código.
+
+> **Para Iniciantes**: JaCoCo é como um "contador" que verifica quantas linhas do seu código foram testadas. Se você tem 100 linhas e 87 foram testadas, sua cobertura é de 87% - quanto maior, melhor!
+
+#### **Como Executar e Gerar Relatório**
+
 ```bash
-# Executar testes com relatório de cobertura
+# Executar todos os testes com relatório de cobertura
 mvn clean test jacoco:report
 
-# Relatório gerado em:
-target/site/jacoco/index.html
+# Ou executar apenas os testes (sem limpar)
+mvn test jacoco:report
+
+# Para projetos com Maven Wrapper
+./mvnw clean test jacoco:report
 ```
 
-**Métricas de Cobertura:**
+#### **Onde Encontrar o Relatório**
 
-- **Controllers**: 95%+
-- **Services**: 90%+
-- **Repositories**: 85%+
-- **Models**: 100%
+Após executar os comandos acima, o relatório será gerado em:
+
+```
+📁 target/site/jacoco/
+├── 📄 index.html          # Página principal do relatório
+├── 📁 br.com.atividade/   # Cobertura por pacote
+└── 📁 jacoco-sessions/    # Dados de sessão
+```
+
+**Para visualizar:**
+
+1. **Navegador**: Abra o arquivo `target/site/jacoco/index.html` no navegador
+2. **VS Code**: Use a extensão "Live Server" para abrir o HTML
+3. **IntelliJ**: Clique com botão direito no arquivo → "Open in Browser"
+
+#### **Métricas Atuais de Cobertura**
+
+**📊 Cobertura Geral: 87% (Excelente!)**
+
+| Pacote        | Instruções | Branches | Complexidade | Linhas  | Métodos | Classes  |
+| ------------- | ---------- | -------- | ------------ | ------- | ------- | -------- |
+| **📦 Total**  | **87%**    | **67%**  | **74%**      | **89%** | **96%** | **100%** |
+| `sevice.impl` | 83%        | 59%      | 61%          | 87%     | 91%     | 100%     |
+| `controller`  | 85%        | 83%      | 50%          | 84%     | 100%    | 100%     |
+| `mapper`      | 100%       | 100%     | 100%         | 100%    | 100%    | 100%     |
+| `config`      | 100%       | n/a      | 100%         | 100%    | 100%    | 100%     |
+| `main`        | 100%       | n/a      | 100%         | 100%    | 100%    | 100%     |
+
+#### **Interpretação das Métricas**
+
+> **Para Iniciantes**: Cada métrica mede um aspecto diferente:
+
+- **📏 Instruções**: Quantas "comandos" do código foram executados nos testes
+- **🌳 Branches**: Quantos "caminhos" (if/else) foram testados
+- **🔄 Complexidade**: Quão complicadas são as funções testadas
+- **📄 Linhas**: Quantas linhas de código foram "tocadas" pelos testes
+- **⚙️ Métodos**: Quantas funções foram chamadas durante os testes
+- **📦 Classes**: Quantas classes foram utilizadas nos testes
+
+#### **Metas de Cobertura**
+
+```xml
+<!-- Configuração no pom.xml -->
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.8</version>
+    <executions>
+        <execution>
+            <id>default-prepare-agent</id>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>default-report</id>
+            <phase>test</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>check</id>
+            <goals>
+                <goal>check</goal>
+            </goals>
+            <configuration>
+                <rules>
+                    <rule>
+                        <element>BUNDLE</element>
+                        <limits>
+                            <limit>
+                                <counter>INSTRUCTION</counter>
+                                <value>COVEREDRATIO</value>
+                                <minimum>0.80</minimum> <!-- 80% mínimo -->
+                            </limit>
+                        </limits>
+                    </rule>
+                </rules>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+#### **Comandos Úteis**
+
+```bash
+# Executar testes e verificar se atende critério mínimo
+mvn clean test jacoco:report jacoco:check
+
+# Apenas gerar relatório (se já executou os testes)
+mvn jacoco:report
+
+# Executar testes específicos com cobertura
+mvn test -Dtest=AtividadeControllerTest jacoco:report
+
+# Limpar relatórios anteriores
+mvn clean
+```
+
+#### **Integração com IDEs**
+
+**🔧 IntelliJ IDEA:**
+
+- Plugin "JaCoCo" nativo
+- Menu: Run → Run with Coverage
+
+**🔧 VS Code:**
+
+- Extensão: "Coverage Gutters"
+- Mostra cobertura diretamente no código
+
+**🔧 Eclipse:**
+
+- Plugin "EclEmma" (JaCoCo integration)
+- Botão "Coverage As" na toolbar
+
+#### **Como Ler o Relatório Visual**
+
+Ao abrir o `index.html`, você verá:
+
+**🏠 Página Principal:**
+
+```
+📊 Element         Instructions    Branches    Cxty    Lines    Methods    Classes
+   br.com.atividade      87%         67%       74%     89%       96%       100%
+   ├── controller        85%         83%       50%     84%      100%       100%
+   ├── service.impl      83%         59%       61%     87%       91%       100%
+   ├── mapper           100%        100%      100%    100%      100%       100%
+   ├── config           100%         n/a      100%    100%      100%       100%
+   └── main             100%         n/a      100%    100%      100%       100%
+```
+
+**🎨 Código Colorido:**
+
+- 🟢 **Verde**: Linha totalmente coberta pelos testes
+- 🟡 **Amarelo**: Linha parcialmente coberta (alguns branches)
+- 🔴 **Vermelho**: Linha não coberta pelos testes
+- ⚫ **Cinza**: Linha não executável (comentários, imports)
+
+**📱 Navegação:**
+
+1. **Clique no pacote** → ver classes do pacote
+2. **Clique na classe** → ver métodos da classe
+3. **Clique no método** → ver código linha por linha
+4. **Hover nas cores** → ver detalhes da cobertura
+
+#### **Exemplo Prático de Uso**
+
+```bash
+# 1. Execute os testes com cobertura
+./mvnw clean test jacoco:report
+
+# 2. Abra o relatório
+# Windows: start target/site/jacoco/index.html
+# macOS: open target/site/jacoco/index.html
+# Linux: xdg-open target/site/jacoco/index.html
+
+# 3. Navegue para identificar código não testado:
+# index.html → br.com.atividade → service.impl → AtividadeServiceImpl.java
+
+# 4. Identifique linhas vermelhas/amarelas
+
+# 5. Crie testes para melhorar cobertura
+
+# 6. Execute novamente para ver melhoria
+./mvnw test jacoco:report
+```
+
+**💡 Dica Pro**: Use `./mvnw test jacoco:report && start target/site/jacoco/index.html` (Windows) para executar e abrir o relatório automaticamente!
 
 ---
 
@@ -697,3 +840,19 @@ curl -X DELETE http://localhost:8080/atividades/1
 ```
 
 ---
+
+## Desenvolvedora
+
+**Jhenifer Lorrane**
+
+- GitHub: [@jheniferlorrane](https://github.com/jheniferlorrane)
+- LinkedIn: [Jhenifer Lorrane](https://www.linkedin.com/in/jheniferanacleto/)
+
+---
+
+## Versão
+
+**v1.0.0** – Case Técnico Completo
+
+- Requisitos 100% atendidos
+- Funcionalidades extras implementadas

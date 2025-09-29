@@ -2,37 +2,221 @@
 
 ## O que é REST?
 
-**REST** (Representational State Transfer) é um estilo arquitetural para sistemas distribuídos que define um conjunto de constraints e princípios para criar APIs escaláveis e bem organizadas.
+**REST** (Representational State Transfer) é um estilo arquitetural para sistemas distribuídos que define um conjunto de **restrições** (constraints) e princípios para criar APIs escaláveis e bem organizadas.
+
+> **O que são "constraints" (restrições)?**
+>
+> **Constraints** são "regras obrigatórias" que uma API deve seguir para ser considerada RESTful. Pense como as "regras do jogo" - assim como no futebol você não pode usar as mãos (exceto o goleiro), no REST você### **Convenções de Nomenclatura**
 
 ### **Princípios Fundamentais**
 
-1. **Client-Server**: Separação clara entre cliente e servidor
-2. **Stateless**: Cada requisição contém todas as informações necessárias
-3. **Cacheable**: Respostas podem ser cacheadas para melhor performance
-4. **Uniform Interface**: Interface consistente entre componentes
-5. **Layered System**: Arquitetura em camadas
-6. **Code on Demand** (opcional): Código executável pode ser transferido
+#### **1. Client-Server (Cliente-Servidor)**
+
+**O que é:** Separação clara entre cliente e servidor, onde cada um tem responsabilidades específicas.
+
+**Como funciona:**
+
+- **Cliente** (frontend): Cuida da interface do usuário, experiência, apresentação dos dados
+- **Servidor** (backend): Processa lógica de negócio, gerencia dados, aplica regras
+
+**No nosso projeto:**
+
+```
+Frontend (React) ←→ Backend (Spring Boot)
+   - Interface        - Lógica de negócio
+   - Experiência      - Banco de dados
+   - Apresentação     - Validações
+```
+
+**Vantagem:** Cliente e servidor podem evoluir independentemente. Frontend pode ser substituído (React → Angular) sem afetar o backend.
+
+#### **2. Stateless (Sem Estado)**
+
+**O que é:** Cada requisição HTTP contém TODAS as informações necessárias para ser processada.
+
+**Como funciona:**
+
+- Servidor não guarda informações entre requisições
+- Cada chamada é independente e completa
+- Todas as informações vêm na própria requisição
+
+**Exemplo no nosso projeto:**
+
+```http
+# ✅ STATELESS - Todas as informações na requisição
+GET /atividades?funcional=EMP001&codigoAtividade=RUN HTTP/1.1
+Authorization: Bearer token123
+Accept: application/json
+
+# ❌ STATEFUL - Dependeria de informações guardadas no servidor
+GET /atividades HTTP/1.1  # Servidor teria que "lembrar" do usuário logado
+```
+
+**Vantagem:** Escalabilidade - qualquer servidor pode processar qualquer requisição.
+
+#### **3. Cacheable (Pode ser Armazenado em Cache)**
+
+**O que é:** Respostas podem ser armazenadas temporariamente para melhorar performance.
+
+**Como funciona:**
+
+- Servidor informa se uma resposta pode ser cacheada
+- Cliente (ou proxy) armazena a resposta por um tempo
+- Próximas requisições idênticas usam cache ao invés de ir ao servidor
+
+**Exemplo no nosso projeto:**
+
+```http
+# Servidor responde com headers de cache:
+HTTP/1.1 200 OK
+Cache-Control: public, max-age=300  # Cache por 5 minutos
+ETag: "abc123"                      # Identificador único da versão
+
+# Próxima requisição:
+GET /atividades/1 HTTP/1.1
+If-None-Match: "abc123"  # "Só me envie se mudou"
+
+# Se não mudou:
+HTTP/1.1 304 Not Modified  # Use o cache!
+```
+
+**Vantagem:** Reduz carga no servidor e melhora velocidade para o usuário.
+
+#### **4. Uniform Interface (Interface Uniforme)**
+
+**O que é:** Todos os recursos seguem os mesmos padrões e convenções.
+
+**Como funciona:**
+
+- Mesmos verbos HTTP (GET, POST, PUT, DELETE)
+- Mesma estrutura de URLs
+- Mesmos códigos de status
+- Mesma representação (JSON)
+
+**Exemplo no nosso projeto:**
+
+```http
+# Padrão consistente para TODOS os recursos:
+GET    /atividades     # Listar
+POST   /atividades     # Criar
+GET    /atividades/1   # Buscar específico
+PUT    /atividades/1   # Atualizar
+DELETE /atividades/1   # Excluir
+```
+
+**Vantagem:** Fácil de aprender - quem conhece um endpoint, conhece todos.
+
+#### **5. Layered System (Sistema em Camadas)**
+
+**O que é:** Arquitetura organizada em camadas, onde cada camada só conhece a camada adjacente.
+
+> **Analogia simples:** É como um prédio - o 3º andar não precisa saber o que acontece no térreo, só precisa conhecer o 2º andar (camada de baixo) e o 4º andar (camada de cima).
+
+**Como funciona:**
+
+- Cliente não precisa saber se está falando diretamente com servidor ou com proxy
+- Podem existir caches, load balancers, firewalls no meio
+- Cada camada tem uma responsabilidade específica
+
+**Exemplo prático no nosso projeto:**
+
+```
+Cliente (Browser/Mobile)
+
+        ↓ "Quero listar atividades"
+
+Load Balancer (distribui carga entre vários servidores)
+
+        ↓ "Enviando para servidor menos ocupado"
+
+API Gateway (portão de entrada - autenticação, roteamento)
+
+        ↓ "Usuário autenticado, pode prosseguir"
+
+Nossa API (Spring Boot - lógica de negócio)
+
+        ↓ "Processando regras e buscando dados"
+
+Banco de Dados (armazena os dados)
+```
+
+**Como isso ajuda na prática:**
+
+- **Cliente** não sabe que existe load balancer - só faz a requisição
+- **Load Balancer** não sabe sobre regras de negócio - só distribui as chamadas
+- **API Gateway** não sabe sobre banco - só autentica e roteia
+- **Nossa API** não sabe sobre load balancer - só processa a lógica
+- **Banco** não sabe sobre clientes - só armazena dados
+
+**Vantagem:** Se quisermos trocar o load balancer ou adicionar um cache, as outras camadas nem ficam sabendo!
+
+#### **6. Code on Demand (Código Sob Demanda) - OPCIONAL**
+
+**O que é:** Servidor pode enviar código executável para o cliente.
+
+**Como funciona:**
+
+- Servidor envia JavaScript, applets, ou plugins
+- Cliente executa esse código localmente
+- Usado raramente em APIs REST modernas
+
+**Exemplo (raramente usado):**
+
+```http
+# Servidor poderia enviar:
+HTTP/1.1 200 OK
+Content-Type: application/javascript
+
+function validarAtividade(dados) {
+  // Código de validação dinâmico
+  return dados.funcional && dados.dataHora;
+}
+```
+
+**No nosso projeto:** Não implementamos - nosso frontend já tem toda lógica necessária.
+
+**Vantagem:** Flexibilidade para enviar lógica dinâmica, mas aumenta complexidade.
 
 ---
 
 ## Como Nossa API Implementa REST
 
-### **Uniform Interface**
+### **Uniform Interface (Interface Uniforme)**
 
-Nossa API segue rigorosamente a interface uniforme através de:
+> **Analogia simples:** É como ter **padrões** em todos os lugares. Imagine que todas as tomadas do mundo fossem iguais - você plugaria qualquer aparelho em qualquer lugar. **Uniform Interface** faz isso com APIs!
+
+**O que significa "uniforme"?**
+
+- Todas as operações seguem as **mesmas regras**
+- Mesma **linguagem** para falar com a API
+- Mesmos **códigos** de resposta
+- Mesmo **formato** de dados (JSON)
+
+Nossa API segue rigorosamente a interface uniforme através de **4 princípios**:
 
 #### **1. Identificação de Recursos**
 
-Cada recurso é identificado por URLs bem definidas:
+**O que é:** Cada "coisa" na API tem um endereço único e previsível.
+
+**Na prática:**
 
 ```
-/atividades          # Coleção de atividades
-/atividades/{id}     # Atividade específica
+/atividades          → Lista TODAS as atividades
+/atividades/1        → Atividade específica (ID = 1)
+/atividades/2        → Atividade específica (ID = 2)
 ```
 
-#### 📊 **2. Representação de Recursos**
+**Por que é "uniforme"?**
 
-Recursos são representados em JSON com estrutura consistente:
+- Se existe `/atividades`, você **sabe** que `/atividades/1` vai existir
+- **Padrão consistente**: `/recurso` e `/recurso/{id}`
+- **Previsível**: Qualquer desenvolvedor consegue "adivinhar" as URLs
+
+#### **2. Representação de Recursos**
+
+**O que é:** Todos os dados vêm no **mesmo formato** (JSON) com **estrutura consistente**.
+
+**Exemplo - sempre retornamos assim:**
 
 ```json
 {
@@ -44,40 +228,91 @@ Recursos são representados em JSON com estrutura consistente:
 }
 ```
 
-#### 🔄 **3. Manipulação via Representações**
+**Por que é "uniforme"?**
 
-Clientes podem manipular recursos através das representações recebidas:
+- **Sempre JSON** (nunca XML misturado com JSON)
+- **Mesmos nomes** de campos (sempre `idAtividade`, nunca `id_atividade`)
+- **Mesma estrutura** (campos no mesmo lugar)
+- **Fácil de entender**: Se você viu um, viu todos
+
+#### **3. Manipulação via Representações**
+
+**O que é:** Você pode **modificar** recursos usando exatamente os **mesmos dados** que recebe.
+
+**Fluxo simples:**
 
 ```javascript
-// Cliente recebe representação
+// 1. BUSCAR (GET) - Recebe os dados
 const atividade = await api.get("/atividades/1");
+// Retorna: { "idAtividade": 1, "descricaoAtividade": "Corrida de 5km", ... }
 
-// Modifica localmente
-atividade.descricaoAtividade = "Corrida de 7km";
+// 2. MODIFICAR - Muda o que quiser localmente
+atividade.descricaoAtividade = "Corrida de 10km"; // Mudou só isso!
 
-// Envia de volta para atualizar
+// 3. ENVIAR (PUT) - Manda os mesmos dados de volta
 await api.put("/atividades/1", atividade);
+// API entende e atualiza!
 ```
 
-#### 🔗 **4. HATEOAS** (Hypermedia as Engine of Application State)
+**Por que é "uniforme"?**
 
-Embora não implementado na versão atual, futuramente incluiremos links relacionados:
+- **Mesma estrutura** para receber e enviar
+- **Não precisa converter** dados
+- **Intuitivo**: O que você vê é o que você manda
+
+#### **4. HATEOAS** (Links Relacionados) - **FUTURO**
+
+**O que é:** API te dá **links** para tudo que você pode fazer com o recurso.
+
+**Imagine receber isso:**
 
 ```json
 {
   "idAtividade": 1,
   "funcional": "EMP001",
-  "dataHora": "2025-09-28T08:00:00",
-  "codigoAtividade": "RUN",
   "descricaoAtividade": "Corrida matinal",
   "_links": {
-    "self": "/atividades/1",
-    "funcionario": "/funcionarios/EMP001",
-    "edit": "/atividades/1",
-    "delete": "/atividades/1"
+    "editar": "/atividades/1",           ← Link para editar
+    "excluir": "/atividades/1",          ← Link para excluir
+    "funcionario": "/funcionarios/EMP001" ← Link relacionado
   }
 }
 ```
+
+**Por que seria útil?**
+
+- **Auto-descoberta**: API te mostra o que você pode fazer
+- **Navegação**: Como links em páginas web
+- **Menos código**: Frontend não precisa "construir" URLs
+
+---
+
+## 🎯 **Por que "Uniform Interface" é importante?**
+
+**Sem padrões (caótico):**
+
+```http
+GET /buscar_atividades        ← Verbo na URL (ruim)
+GET /atividade/obter/1        ← Inconsistente
+POST /criar-atividade         ← Hífen vs underscore
+PUT /atividades/1/update      ← Verbo desnecessário
+```
+
+**Com Uniform Interface (organizado):**
+
+```http
+GET /atividades               ← Sempre substantivo plural
+GET /atividades/1             ← Padrão consistente
+POST /atividades              ← Mesmo endpoint, verbo HTTP diferente
+PUT /atividades/1             ← Limpo e intuitivo
+```
+
+**Benefícios reais:**
+
+- ✅ **Fácil de aprender**: Padrões são previsíveis
+- ✅ **Menos bugs**: Desenvolvedor sabe o que esperar
+- ✅ **Reutilização**: Código frontend funciona igual para todos endpoints
+- ✅ **Documentação**: Mais simples de explicar e entender
 
 ---
 
@@ -111,9 +346,9 @@ Embora não implementado na versão atual, futuramente incluiremos links relacio
 
 ---
 
-## Códigos de Status HTTP Implementados
+## Códigos de Status HTTP Implementados:
 
-### ✅ **Família 2xx - Sucesso**
+### **Família 2xx - Sucesso**
 
 | Código  | Nome       | Quando Usar            | Implementado |
 | ------- | ---------- | ---------------------- | ------------ |
@@ -121,27 +356,24 @@ Embora não implementado na versão atual, futuramente incluiremos links relacio
 | **201** | Created    | POST criou recurso     | ✅           |
 | **204** | No Content | DELETE bem-sucedido    | ✅           |
 
-### ❌ **Família 4xx - Erro do Cliente**
+### **Família 4xx - Erro do Cliente**
 
-| Código  | Nome                 | Quando Usar          | Implementado |
-| ------- | -------------------- | -------------------- | ------------ |
-| **400** | Bad Request          | Dados inválidos      | ✅           |
-| **404** | Not Found            | Recurso não existe   | ✅           |
-| **405** | Method Not Allowed   | Verbo não suportado  | ✅           |
-| **422** | Unprocessable Entity | Validação de negócio | Futuro       |
+| Código  | Nome        | Quando Usar        | Implementado |
+| ------- | ----------- | ------------------ | ------------ |
+| **400** | Bad Request | Dados inválidos    | ✅           |
+| **404** | Not Found   | Recurso não existe | ✅           |
 
-### 🔥 **Família 5xx - Erro do Servidor**
+### **Família 5xx - Erro do Servidor**
 
-| Código  | Nome                  | Quando Usar           | Implementado |
-| ------- | --------------------- | --------------------- | ------------ |
-| **500** | Internal Server Error | Erro interno          | ✅           |
-| **503** | Service Unavailable   | Servidor indisponível | Futuro       |
+| Código  | Nome                  | Quando Usar  | Implementado |
+| ------- | --------------------- | ------------ | ------------ |
+| **500** | Internal Server Error | Erro interno | ✅           |
 
 ---
 
 ## Padrões de Requisição/Resposta
 
-### 📝 **POST - Criação de Recurso**
+### **POST - Criação de Recurso**
 
 **Padrão REST:**
 
@@ -174,12 +406,12 @@ Location: /atividades/1
 }
 ```
 
-### 📋 **GET - Leitura de Coleção**
+### **GET - Leitura de Coleção**
 
 **Padrão REST:**
 
 ```http
-GET /atividades?funcional=EMP001&page=1&size=10 HTTP/1.1
+GET /atividades?funcional=EMP001 HTTP/1.1
 Accept: application/json
 ```
 
@@ -188,28 +420,26 @@ Accept: application/json
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
-Cache-Control: public, max-age=300
 
-{
-  "content": [
-    {
-      "idAtividade": 1,
-      "funcional": "EMP001",
-      "dataHora": "2025-09-28T08:00:00",
-      "codigoAtividade": "RUN",
-      "descricaoAtividade": "Corrida matinal"
-    }
-  ],
-  "pageable": {
-    "page": 1,
-    "size": 10,
-    "totalElements": 25,
-    "totalPages": 3
+[
+  {
+    "idAtividade": 1,
+    "funcional": "EMP001",
+    "dataHora": "2025-09-28T08:00:00",
+    "codigoAtividade": "RUN",
+    "descricaoAtividade": "Corrida matinal"
+  },
+  {
+    "idAtividade": 2,
+    "funcional": "EMP002",
+    "dataHora": "2025-09-28T18:45:00",
+    "codigoAtividade": "GYM",
+    "descricaoAtividade": "Treino de força"
   }
-}
+]
 ```
 
-### 🎯 **GET - Leitura de Recurso Específico**
+### **GET - Leitura de Recurso Específico**
 
 **Padrão REST:**
 
@@ -236,7 +466,7 @@ Last-Modified: Wed, 28 Sep 2025 10:30:00 GMT
 }
 ```
 
-### ✏️ **PUT - Atualização Completa**
+### **PUT - Atualização Completa**
 
 **Padrão REST:**
 
@@ -269,7 +499,7 @@ ETag: "ghi789"
 }
 ```
 
-### 🗑️ **DELETE - Remoção de Recurso**
+### **DELETE - Remoção de Recurso**
 
 **Padrão REST:**
 
@@ -304,9 +534,6 @@ GET /atividades?dataInicio=2025-09-01&dataFim=2025-09-30
 
 # Busca textual
 GET /atividades?descricaoAtividade=corrida
-
-# Paginação (futuro)
-GET /atividades?page=1&size=20&sort=dataHora,desc
 ```
 
 ### 🎯 **Convenções de Nomenclatura**
@@ -330,6 +557,21 @@ GET /atividades/funcional/EMP001     # Viola princípios REST
 GET /atividades/tipo/RUN             # Hierarquia confusa
 GET /atividades/funcionario/EMP001   # Não é um sub-recurso
 ```
+
+> **O que é um sub-recurso?**
+>
+> **Sub-recurso** é um recurso que **pertence** a outro recurso e não faz sentido existir sozinho. É como uma "parte" de algo maior.
+>
+> **Exemplos CORRETOS de sub-recursos:**
+>
+> - `GET /posts/123/comentarios` ← Comentários **do post** 123
+> - `GET /pedidos/456/itens` ← Itens **do pedido** 456
+>
+> **Por que `funcional` NÃO é sub-recurso?**
+>
+> - `funcional` é apenas um **filtro** para buscar atividades
+> - Não é algo que "pertence" a uma atividade
+> - É uma **propriedade** da atividade, não um recurso independente
 
 **✅ Padrão CORRETO (Query Parameter):**
 
@@ -374,7 +616,24 @@ public ResponseEntity<List<AtividadeOutput>> listar(
 
 #### 📖 **Referência aos Padrões REST**
 
-> **RFC 3986 (URI Specification)**: Query parameters são apropriados para "não-hierárquicos" dados que modificam ou filtram o recurso principal.
+> **RFC 3986 (URI Specification)**: Query parameters são apropriados para dados **"não-hierárquicos"** que modificam ou filtram o recurso principal.
+>
+> **O que são dados "não-hierárquicos"?**
+> São informações que **não representam uma hierarquia** (como pai → filho), mas sim **critérios de busca** ou **configurações**.
+>
+> **Exemplos de dados hierárquicos vs não-hierárquicos:**
+>
+> **✅ HIERÁRQUICOS (usam Path Parameters):**
+>
+> - `/posts/456/comentarios/789` ← Comentário **pertence** ao post
+> - `/pedidos/111/itens/222` ← Item **pertence** ao pedido
+>
+> **✅ NÃO-HIERÁRQUICOS (usam Query Parameters):**
+>
+> - `/atividades?funcional=EMP001` ← **Filtro** por funcional
+> - `/produtos?categoria=eletrônicos` ← **Filtro** por categoria
+> - `/vendas?dataInicio=2025-01-01` ← **Filtro** por período
+> - `/usuarios?ativo=true&ordenar=nome` ← **Critérios** de busca
 
 > **Richardson Maturity Model**: Level 2 REST APIs usam query parameters para filtros em coleções, reservando path parameters apenas para identificação hierárquica de recursos.
 
@@ -384,18 +643,18 @@ public ResponseEntity<List<AtividadeOutput>> listar(
 
 ## Headers HTTP Importantes
 
-### 📥 **Request Headers**
+### **Request Headers**
 
 ```http
 Content-Type: application/json          # Tipo do conteúdo
 Accept: application/json                # Tipo aceito na resposta
-Authorization: Bearer <token>           # Autenticação (futuro)
+Authorization: Bearer <token>           # Autenticação
 If-Match: "etag-value"                 # Controle de concorrência
 If-None-Match: "etag-value"            # Cache condicional
 User-Agent: MobileApp/1.0              # Identificação do cliente
 ```
 
-### 📤 **Response Headers**
+### **Response Headers**
 
 ```http
 Content-Type: application/json         # Tipo do conteúdo retornado
@@ -408,164 +667,18 @@ Access-Control-Allow-Origin: *        # CORS
 
 ---
 
-## Boas Práticas Implementadas
+## Desenvolvedora
 
-### 🎯 **1. Naming Conventions**
+**Jhenifer Lorrane**
 
-```http
-# ✅ Bom - Substantivos no plural
-GET /atividades
-POST /atividades
-GET /atividades/1
-
-# ❌ Ruim - Verbos nas URLs
-GET /getAtividades
-POST /createAtividade
-DELETE /deleteAtividade/1
-```
-
-### 🔄 **2. Consistent Error Responses**
-
-```json
-{
-  "timestamp": "2025-09-28T15:30:00.123Z",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "Validation failed",
-  "path": "/atividades",
-  "errors": [
-    {
-      "field": "funcional",
-      "rejectedValue": "",
-      "message": "Funcional é obrigatório"
-    }
-  ]
-}
-```
-
-### 📊 **3. Stateless Design**
-
-```java
-// ✅ Stateless - toda informação na requisição
-@GetMapping("/atividades")
-public ResponseEntity<List<AtividadeOutput>> listar(
-    @RequestParam(required = false) String funcional,
-    @RequestParam(required = false) String codigoAtividade) {
-    // Implementação
-}
-
-// ❌ Stateful - dependente de estado do servidor
-@GetMapping("/atividades")
-public ResponseEntity<List<AtividadeOutput>> listar() {
-    // Usa estado da sessão - não REST
-    String funcional = userSession.getCurrentFuncional();
-}
-```
-
-### 🔒 **4. Idempotency**
-
-```java
-// ✅ PUT é idempotente
-@PutMapping("/atividades/{id}")
-public ResponseEntity<AtividadeOutput> atualizar(
-    @PathVariable Long id,
-    @RequestBody AtividadeInput input) {
-    // Sempre produz o mesmo resultado
-    return ResponseEntity.ok(service.atualizar(id, input));
-}
-
-// ✅ DELETE é idempotente
-@DeleteMapping("/atividades/{id}")
-public ResponseEntity<Void> excluir(@PathVariable Long id) {
-    service.excluir(id); // Safe para múltiplas chamadas
-    return ResponseEntity.noContent().build();
-}
-```
+- GitHub: [@jheniferlorrane](https://github.com/jheniferlorrane)
+- LinkedIn: [Jhenifer Lorrane](https://www.linkedin.com/in/jheniferanacleto/)
 
 ---
 
-## Funcionalidades RESTful Futuras
+## Versão
 
-### 📈 **1. HATEOAS (Level 3 REST)**
+**v1.0.0** – Case Técnico Completo
 
-```json
-{
-  "idAtividade": 1,
-  "funcional": "EMP001",
-  "dataHora": "2025-09-28T08:00:00",
-  "codigoAtividade": "RUN",
-  "descricaoAtividade": "Corrida matinal",
-  "_links": {
-    "self": { "href": "/atividades/1" },
-    "edit": { "href": "/atividades/1", "method": "PUT" },
-    "delete": { "href": "/atividades/1", "method": "DELETE" },
-    "funcionario": { "href": "/funcionarios/EMP001" }
-  },
-  "_actions": {
-    "duplicate": {
-      "href": "/atividades",
-      "method": "POST",
-      "type": "application/json"
-    }
-  }
-}
-```
-
-### 🔄 **2. ETags e Conditional Requests**
-
-```java
-@GetMapping("/atividades/{id}")
-public ResponseEntity<AtividadeOutput> buscarPorId(
-    @PathVariable Long id,
-    @RequestHeader(value = "If-None-Match", required = false) String ifNoneMatch) {
-
-    AtividadeOutput atividade = service.buscarPorId(id);
-    String etag = generateETag(atividade);
-
-    if (etag.equals(ifNoneMatch)) {
-        return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
-    }
-
-    return ResponseEntity.ok()
-        .eTag(etag)
-        .body(atividade);
-}
-```
-
-### 📊 **3. Paginação Padronizada**
-
-```java
-@GetMapping("/atividades")
-public ResponseEntity<Page<AtividadeOutput>> listar(
-    @RequestParam(required = false) String funcional,
-    @PageableDefault(size = 20, sort = "dataHora", direction = Sort.Direction.DESC)
-    Pageable pageable) {
-
-    Page<AtividadeOutput> page = service.listar(funcional, pageable);
-    return ResponseEntity.ok(page);
-}
-```
-
-### 🔍 **4. Content Negotiation**
-
-```java
-@GetMapping(value = "/atividades/{id}",
-           produces = {MediaType.APPLICATION_JSON_VALUE,
-                      MediaType.APPLICATION_XML_VALUE})
-public ResponseEntity<AtividadeOutput> buscarPorId(
-    @PathVariable Long id,
-    @RequestHeader(value = "Accept", required = false) String accept) {
-
-    AtividadeOutput atividade = service.buscarPorId(id);
-
-    if (MediaType.APPLICATION_XML_VALUE.equals(accept)) {
-        return ResponseEntity.ok()
-            .contentType(MediaType.APPLICATION_XML)
-            .body(atividade);
-    }
-
-    return ResponseEntity.ok()
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(atividade);
-}
-```
+- Requisitos 100% atendidos
+- Funcionalidades extras implementadas

@@ -386,3 +386,19 @@ docker system df
 ```
 
 ---
+
+## Desenvolvedora
+
+**Jhenifer Lorrane**
+
+- GitHub: [@jheniferlorrane](https://github.com/jheniferlorrane)
+- LinkedIn: [Jhenifer Lorrane](https://www.linkedin.com/in/jheniferanacleto/)
+
+---
+
+## Versão
+
+**v1.0.0** – Case Técnico Completo
+
+- Requisitos 100% atendidos
+- Funcionalidades extras implementadas

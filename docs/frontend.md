@@ -4,6 +4,10 @@
 
 O frontend é uma aplicação **React 19** moderna construída com **Vite** como build tool, proporcionando uma experiência de desenvolvimento rápida e otimizada. A interface foi desenvolvida com foco em usabilidade, responsividade e performance.
 
+> **O que é uma Build Tool?**
+>
+> Uma **build tool** é uma ferramenta que automatiza o processo de transformar seu código fonte em uma aplicação pronta para produção. É como um "assistente de montagem" que pega todos os seus arquivos e os prepara para funcionar no navegador.
+
 ### **Características Principais**
 
 - **SPA (Single Page Application)**: Navegação fluida sem recarregamento de página
@@ -17,13 +21,13 @@ O frontend é uma aplicação **React 19** moderna construída com **Vite** como
 
 ## Stack Tecnológica Detalhada
 
-### **Core Technologies**
-
 | Tecnologia          | Versão               | Descrição                                 |
 | ------------------- | -------------------- | ----------------------------------------- |
 | **React**           | 19.1.1               | Biblioteca para criação de interfaces     |
 | **Vite**            | rolldown-vite@7.1.12 | Build tool moderna e otimizada            |
 | **JavaScript ES6+** | -                    | Linguagem principal com features modernas |
+
+---
 
 ### **Dependências Principais**
 
@@ -44,7 +48,7 @@ O frontend é uma aplicação **React 19** moderna construída com **Vite** como
 }
 ```
 
-### 🔧 **Ferramentas de Desenvolvimento**
+### **Ferramentas de Desenvolvimento**
 
 - **ESLint**: Linting e padronização de código
 - **Vite Dev Server**: Servidor de desenvolvimento com HMR
@@ -53,9 +57,9 @@ O frontend é uma aplicação **React 19** moderna construída com **Vite** como
 
 ---
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
-### 🏗️ **Organização de Arquivos**
+### **Organização de Arquivos**
 
 ```
 front-end/
@@ -83,7 +87,7 @@ front-end/
 └── index.html             # Template HTML
 ```
 
-### 🧩 **Arquitetura de Componentes**
+### **Arquitetura de Componentes**
 
 ```mermaid
 graph TD
@@ -98,9 +102,9 @@ graph TD
 
 ---
 
-## 🧩 Detalhamento dos Componentes
+## Detalhamento dos Componentes
 
-### 📝 **FormularioAtividade.jsx**
+### **FormularioAtividade.jsx**
 
 Componente responsável pelo cadastro e edição de atividades:
 
@@ -148,13 +152,15 @@ const FormularioAtividade = ({
 
 **Funcionalidades:**
 
-- ✅ Criação de novas atividades
-- ✅ Edição de atividades existentes
-- ✅ Validação client-side com React Hook Form
-- ✅ Reset automático após submit
-- ✅ Tratamento de erros
+- Criação de novas atividades
+- Edição de atividades existentes
+- Validação client-side com React Hook Form
+- Reset automático após submit
+- Tratamento de erros
 
-### 🔍 **FiltrosAtividade.jsx**
+--- 
+
+### **FiltrosAtividade.jsx**
 
 Componente para filtros avançados de busca:
 
@@ -190,15 +196,18 @@ const FiltrosAtividade = ({ onFiltroAplicado }) => {
 };
 ```
 
+
 **Funcionalidades:**
 
-- 🔍 Filtro por funcionário (funcional)
-- 🏃‍♂️ Filtro por tipo de atividade
-- 📝 Filtro por descrição (busca textual)
-- 📅 Filtro por período (data início/fim)
-- 🗑️ Limpeza de todos os filtros
+- Filtro por funcionário (funcional)
+- Filtro por tipo de atividade
+- Filtro por descrição (busca textual)
+- Filtro por período (data início/fim)
+- Limpeza de todos os filtros
 
-### 📋 **ListaAtividades.jsx**
+--- 
+
+### **ListaAtividades.jsx**
 
 Componente principal para exibição e gerenciamento das atividades:
 
@@ -252,17 +261,17 @@ const ListaAtividades = ({
 
 **Funcionalidades:**
 
-- 📋 Listagem paginada de atividades
-- ✏️ Botão de edição inline
-- 🗑️ Exclusão com confirmação
-- 📅 Formatação de datas com date-fns
-- 📱 Layout responsivo em cards
+- Listagem paginada de atividades
+- Botão de edição inline
+- Exclusão com confirmação
+- Formatação de datas com date-fns
+- Layout responsivo em cards
 
 ---
 
 ## Comunicação com API
 
-### 🔌 **Cliente HTTP (api.js)**
+### **Cliente HTTP (api.js)**
 
 ```javascript
 import axios from "axios";
@@ -332,7 +341,7 @@ export const atividadeService = {
 };
 ```
 
-### 🔄 **Gerenciamento de Estado**
+### **Gerenciamento de Estado**
 
 ```javascript
 // App.jsx - Estado principal da aplicação
@@ -401,14 +410,14 @@ const App = () => {
 
 ## Estilos e Interface
 
-### 🖌️ **Abordagem de Estilos**
+### **Abordagem de Estilos**
 
 - **CSS Modules**: Estilos isolados por componente
 - **BEM Methodology**: Nomenclatura consistente de classes
 - **Responsive Design**: Mobile-first approach
 - **CSS Variables**: Cores e medidas centralizadas
 
-### 🎨 **Design System**
+### **Design System**
 
 ```css
 /* index.css - Variáveis globais */
@@ -440,7 +449,7 @@ body {
 }
 ```
 
-### 📱 **Responsividade**
+### **Responsividade**
 
 ```css
 /* Mobile First - Base styles */
@@ -472,7 +481,7 @@ body {
 
 ## Performance e Otimizações
 
-### 🚀 **Build Otimizado**
+### **Build Otimizado**
 
 ```javascript
 // vite.config.js
@@ -501,7 +510,7 @@ export default defineConfig({
 });
 ```
 
-### ⚡ **Otimizações Implementadas**
+### **Otimizações Implementadas**
 
 - **Code Splitting**: Separação de bundles vendor/utils
 - **Tree Shaking**: Eliminação de código não usado
@@ -513,7 +522,7 @@ export default defineConfig({
 
 ## Como Executar
 
-### 🚀 **Desenvolvimento Local**
+### **Desenvolvimento Local**
 
 ```bash
 # Instalar dependências
@@ -533,7 +542,7 @@ npm run preview
 npm run lint
 ```
 
-### 🐳 **Com Docker**
+### **Com Docker**
 
 ```bash
 # Via Docker Compose (recomendado)
@@ -545,7 +554,7 @@ docker build -t atividade-frontend .
 docker run -p 5173:5173 atividade-frontend
 ```
 
-### ⚙️ **Variáveis de Ambiente**
+### **Variáveis de Ambiente**
 
 ```bash
 # .env.local
@@ -558,7 +567,7 @@ VITE_APP_VERSION="1.0.0"
 
 ## Debugging e Ferramentas
 
-### 🛠️ **Ferramentas de Desenvolvimento**
+### **Ferramentas de Debug**
 
 1. **React Developer Tools** (Browser Extension)
 
@@ -577,7 +586,7 @@ VITE_APP_VERSION="1.0.0"
    - Console para logs
    - Application tab para local storage
 
-### 📊 **Monitoramento**
+### **Monitoramento**
 
 ```javascript
 // Logging estruturado
@@ -601,15 +610,18 @@ try {
 
 ---
 
-## 🔮 Próximas Funcionalidades
+## Desenvolvedora
 
-### 📈 **Roadmap Frontend**
+**Jhenifer Lorrane**
 
-- [ ] **Autenticação JWT**: Login/logout com token
-- [ ] **Dashboard Analytics**: Gráficos com Chart.js
-- [ ] **PWA**: Aplicação instalável offline-first
-- [ ] **Dark Mode**: Tema escuro/claro
-- [ ] **Internacionalização**: Multi-idiomas (i18n)
-- [ ] **Drag & Drop**: Upload de arquivos
-- [ ] **Real-time**: WebSocket para atualizações live
-- [ ] **Cache**: React Query para cache inteligente
+- GitHub: [@jheniferlorrane](https://github.com/jheniferlorrane)
+- LinkedIn: [Jhenifer Lorrane](https://www.linkedin.com/in/jheniferanacleto/)
+
+---
+
+## Versão
+
+**v1.0.0** – Case Técnico Completo
+
+- Requisitos 100% atendidos
+- Funcionalidades extras implementadas

@@ -43,7 +43,7 @@ Esta aplicação foi desenvolvida como resposta a um **case técnico** para cria
 
 ## Funcionalidades Principais
 
-- **Cadastro de atividades**: data/hora, codigo da atividade e descrição
+- **Cadastro de atividades** com funcional, data/hora, codigo da atividade e descrição
 - **Listagem completa** e filtros avançados: por funcional, codigo da atividade, descrição ou período
 - **CRUD completo**: criar, editar, excluir e buscar atividades
 - **Interface Web**: Frontend moderno em React
@@ -203,7 +203,7 @@ Explore a documentação técnica detalhada:
 
 ---
 
-## Desenvolvedor
+## Desenvolvedora
 
 **Jhenifer Lorrane**
 
