@@ -1,0 +1,207 @@
+/* Container principal da lista */
+.lista-container {
+  margin-top: 16px;
+}
+
+.lista-header {
+  margin-bottom: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.lista-header h3 {
+  color: #2c3e50;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lista-header h3:before {
+  content: "📋";
+  font-size: 22px;
+}
+
+/* Estados especiais */
+.carregando,
+.vazio {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6c757d;
+}
+
+.carregando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.vazio p {
+  font-size: 18px;
+  margin: 0 0 8px 0;
+}
+
+.vazio small {
+  font-size: 14px;
+  color: #95a5a6;
+}
+
+/* Grid de atividades */
+.atividades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+/* Card de atividade */
+.atividade-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.atividade-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Header do card */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.funcional {
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.botao-editar,
+.botao-deletar {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.botao-editar {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+.botao-editar:hover {
+  background-color: #e9ecef;
+  transform: scale(1.1);
+}
+
+.botao-deletar {
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+}
+
+.botao-deletar:hover {
+  background-color: #fee;
+  transform: scale(1.1);
+}
+
+/* Body do card */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.codigo,
+.descricao,
+.data-hora {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.codigo strong,
+.descricao strong,
+.data-hora strong,
+.funcional strong {
+  color: #495057;
+  font-weight: 600;
+}
+
+.descricao {
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 4px solid #3498db;
+}
+
+/* Footer do card */
+.card-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f3f4;
+}
+
+.card-footer small {
+  color: #95a5a6;
+  font-size: 12px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .atividades-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .acoes {
+    align-self: flex-end;
+  }
+
+  .atividade-card {
+    padding: 16px;
+  }
+}

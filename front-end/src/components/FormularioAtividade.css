@@ -1,0 +1,145 @@
+/* Overlay do formulário */
+.formulario-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Container do formulário */
+.formulario-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 500px;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.formulario-container h2 {
+  margin: 0 0 24px 0;
+  color: #2c3e50;
+  font-size: 24px;
+  text-align: center;
+}
+
+/* Campos do formulário */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label {
+  font-weight: 600;
+  color: #34495e;
+  font-size: 14px;
+}
+
+.campo input,
+.campo textarea {
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.campo input:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.campo textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Mensagens de erro */
+.erro {
+  color: #e74c3c;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Botões */
+.botoes {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.botao-cancelar,
+.botao-salvar {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.botao-cancelar {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.botao-cancelar:hover {
+  background-color: #7f8c8d;
+}
+
+.botao-salvar {
+  background-color: #27ae60;
+  color: white;
+}
+
+.botao-salvar:hover {
+  background-color: #219a52;
+}
+
+.botao-cancelar:disabled,
+.botao-salvar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .formulario-container {
+    min-width: unset;
+    width: 95%;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .botoes {
+    flex-direction: column;
+  }
+
+  .botao-cancelar,
+  .botao-salvar {
+    width: 100%;
+  }
+}
